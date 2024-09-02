@@ -1,9 +1,10 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import { MenuLink } from "../typography/Links/menu-link";
 import { IconButton } from "../icon-button";
 import { DarkModeIcon } from "../Icons/darkMode";
 import { LightModeIcon } from "../Icons/light-mode";
 import { Button } from "../button";
+import { useClickAway } from "../../utils/use-click-away";
 
 export const Header: FC = () => {
   const [dark, setDark] = useState(false);
@@ -13,6 +14,15 @@ export const Header: FC = () => {
     setDark(!dark);
     document.body.classList.toggle("dark");
   };
+
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  const toggleMenu = useCallback(() => {
+    setOpenNav(!openNav);
+  }, [openNav]);
+
+  useClickAway(dropdownRef.current, toggleMenu);
+
   return (
     <header className="dark:bg-gray-dark-default">
       <nav>
@@ -58,7 +68,7 @@ export const Header: FC = () => {
             className="text-sm text-gray-500 hover:bg-gray-100 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 inline-flex h-10 w-10 items-center justify-center rounded-lg p-2 focus:outline-none focus:ring-2 md:hidden"
             aria-controls="navbar-default"
             aria-expanded="false"
-            onClick={() => setOpenNav(!openNav)}
+            onClick={toggleMenu}
           >
             <span className="sr-only">Open main menu</span>
             <svg
@@ -80,7 +90,7 @@ export const Header: FC = () => {
 
           {openNav && (
             <div className="w-full md:block md:w-auto" id="navbar-default">
-              <ul className="mt-4 flex flex-col items-center rounded-lg border p-4 font-medium dark:bg-gray-dark-50 md:mt-0 md:flex-row md:space-x-8 md:border-0 md:p-0 rtl:space-x-reverse">
+              <ul className="mt-4 flex flex-col items-center rounded-lg border p-4 font-medium md:mt-0 md:flex-row md:space-x-8 md:border-0 md:p-0 rtl:space-x-reverse">
                 <li>
                   <a href="#about">
                     <MenuLink>About</MenuLink>
